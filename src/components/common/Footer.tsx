@@ -9,11 +9,11 @@ function Footer() {
     return (
       <Box
         sx={{
-          mt: 8,
-          alignItems: 'center',
-          justifyContent: 'center',
+          mt: 5,
           backgroundColor: '#f5f5f5',
           padding: '20px',
+          boxSizing: 'border-box',
+          marginRight: 'calc(-50vw + 50%)',
         }}
       >
         <Typography variant="body2" color="text.secondary">

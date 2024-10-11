@@ -9,6 +9,7 @@ const StickyAppBar = styled(AppBar)(({ theme }) => ({
   left: 0,
   right: 0,
   zIndex: theme.zIndex.drawer + 1,
+  position: 'fixed',
 }));
 
 function Header() {
