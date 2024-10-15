@@ -17,7 +17,7 @@ function Footer() {
         }}
       >
         <Typography variant="body2" color="text.secondary">
-          &copy; {new Date().getFullYear()} Sagar Patil.
+          &copy; {new Date().getFullYear()} Online Book Store Publications.
         </Typography>
       </Box>
     );

@@ -1,34 +1,53 @@
-import React from 'react';
-import { styled } from '@mui/material/styles';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
+import React, { useContext } from "react";
+import {
+  Box,
+  Button,
+  Typography,
+  Toolbar,
+  AppBar,
+  styled,
+} from "@mui/material";
+import { useAppSelector } from "../../hooks/useAppSelector";
 
-const StickyAppBar = styled(AppBar)(({ theme }) => ({
+const StickyAppBar = styled(AppBar)(() => ({
   top: 0,
   left: 0,
   right: 0,
-  zIndex: theme.zIndex.drawer + 1,
-  position: 'fixed',
+  zIndex: 1,
+  position: "fixed",
 }));
 
 function Header() {
+  const loggedinUser = useAppSelector((state) => state.auth.loggedinUser);
+  console.log("loggedinUser", loggedinUser);
+
+  const handleLogin = () => {
+    // Add your login logic here
+    console.log("Login button clicked");
+  };
+
   return (
-    <div>
-      <StickyAppBar>
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Book Reviews
-          </Typography>
-        </Toolbar>
-      </StickyAppBar>
+    <StickyAppBar>
+      <Toolbar
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          width: "-webkit-fill-available",
+        }}
+      >
+        <Box sx={{ flexGrow: 1, display: "flex", justifyContent: "center" }}>
+          <Typography variant="h5">Welcome to Books' Library</Typography>
+        </Box>
+        <Button color="inherit" onClick={handleLogin}>
+          Logout
+        </Button>
         {/* TODO:
-        To add -
-          1. Search bar
-          2. Login/Logout button
-          3. User profile
+            To add -
+          1. User profile
         */}
-    </div>
+      </Toolbar>
+    </StickyAppBar>
   );
 }
 

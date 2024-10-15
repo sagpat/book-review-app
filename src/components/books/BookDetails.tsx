@@ -1,41 +1,65 @@
-import React from 'react';
-import { Card, CardContent, CardMedia, Typography, Paper, Rating } from '@mui/material';
-import { useBookContext } from '../../context/BookContext';
+import React from "react";
+import { Grid, Paper, Box, Button, Typography, Rating, CardMedia } from "@mui/material";
+import { useSearchParams } from "react-router-dom";
 
-const BookDetails: React.FC = () => {
-  const { selectedBook } = useBookContext();
-  console.log('selectedBook', selectedBook);
+const BookDetails = () => {
+  const book = {
+    id: 3,
+    title: "Pride and Prejudice",
+    author: "Jane Austen",
+    description:
+      "A romantic novel of manners set in Georgian England, focusing on the Bennet family and their five unmarried daughters.A romantic novel of manners set in Georgian England, focusing on the Bennet family and their five unmarried daughters.A romantic novel of manners set in Georgian England, focusing on the Bennet family and their five unmarried daughters.A romantic novel of manners set in Georgian England, focusing on the Bennet family and their five unmarried daughters.",
+    thumbnail:
+      "http://books.google.com/books/content?id=evuwdDLfAyYC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+    rating: 4,
+  };
 
-  if (!selectedBook) {
-    return (
-      <Paper elevation={3} sx={{ p: 2, height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Typography variant="h6">Select a book to view details</Typography>
-      </Paper>
-    );
-  }
+// REMEMBER: save image in db itself with specific width and height.
 
+  const [searchParams] = useSearchParams();
+  const bookId = searchParams.get("id");
+
+  console.log("bookId", bookId);
   return (
-    <Card>
-      <CardMedia
-        component="img"
-        height="300"
-        image={selectedBook.thumbnail}
-        alt={`Cover of ${selectedBook.title}`}
-      />
-      <CardContent>
-        <Typography gutterBottom variant="h5" component="div">
-          {selectedBook.title}
-        </Typography>
-        <Typography variant="subtitle1" color="text.secondary" gutterBottom>
-          by {selectedBook.author}
-        </Typography>
-        <Rating name="read-only" value={selectedBook.rating} readOnly />
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-          {selectedBook.description}
-        </Typography>
-      </CardContent>
-    </Card>
-  );
-};
+        <Paper
+        sx={{
+            margin: "auto",
+            alignItems: "center",
+            name: "book-details",
+            justifyContent: 'center',
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              padding: "1rem",
+              justifyContent: 'center',
+            }}
+          >
+            <CardMedia
+              component="img"
+              image={book.thumbnail}
+              sx={{ width: 400, height: 400, marginRight: "1rem" }}
+            />
+            <Box>
+            <Typography variant="h3" sx={{ padding: "5px" }}>
+              {book.title}
+            </Typography>
+            <Typography variant="h6" gutterBottom>
+              {book.author}
+            </Typography>
+            <Rating name="read-only" value={book.rating} readOnly />
+            <Typography variant="body2" sx={{textTransform: "lowercase"}}>
+              {book.description}
+            </Typography>
+            </Box>
+          </Box>
+        </Paper>
+  )
+}
 
 export default BookDetails;
