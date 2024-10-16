@@ -6,10 +6,10 @@ export const login = (username: string, password: string) => async (dispatch: Ap
   try {
     const response = await apiRequest("post", "/api/auth/login", { username, password });
     console.log("response::::", response);
-    const { token, loggedinUserName, status, id } = response;
+    const { token, loggedinUserName, status, id, role } = response;
 
     // Dispatch login success
-    dispatch(loginSuccess({token, username: loggedinUserName, status, id }));
+    dispatch(loginSuccess({token, username: loggedinUserName, status, id, role }));
 
     // Store token locally
     localStorage.setItem("token", token);
