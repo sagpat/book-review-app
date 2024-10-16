@@ -5,11 +5,10 @@
 2. once this repo is cloned, kindly do `npm i` and `npm run dev`
 3. Below is the folder structure for ref:
 
-
-├── public
-│   └── book.svg
-├── src
-│   ├── apis
+- ├── public
+- │   └── book.svg
+- ├── src
+-  │   ├── apis
 │   │   └── api.tsx  - common API structure to invoke APIs throughout the app.
 │   ├── assets
 │   │   └── react.svg
