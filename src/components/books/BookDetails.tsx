@@ -1,65 +1,196 @@
-import React from "react";
-import { Grid, Paper, Box, Button, Typography, Rating, CardMedia } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import {
+  Grid,
+  Paper,
+  Box,
+  Button,
+  Typography,
+  Rating,
+  CardMedia,
+  TextField,
+} from "@mui/material";
 import { useSearchParams } from "react-router-dom";
+import { apiRequest } from "../../apis/api";
+import { useAppSelector } from "../../hooks/useAppSelector";
+import getFormattedDate from "../../helper/Date";
 
 const BookDetails = () => {
-  const book = {
-    id: 3,
-    title: "Pride and Prejudice",
-    author: "Jane Austen",
-    description:
-      "A romantic novel of manners set in Georgian England, focusing on the Bennet family and their five unmarried daughters.A romantic novel of manners set in Georgian England, focusing on the Bennet family and their five unmarried daughters.A romantic novel of manners set in Georgian England, focusing on the Bennet family and their five unmarried daughters.A romantic novel of manners set in Georgian England, focusing on the Bennet family and their five unmarried daughters.",
-    thumbnail:
-      "http://books.google.com/books/content?id=evuwdDLfAyYC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
-    rating: 4,
+  const reviewDate = getFormattedDate(new Date().toLocaleDateString());
+  console.log("reviewDate", reviewDate);
+  const [searchParams] = useSearchParams();
+
+  const bookId = searchParams.get("id");
+  const username = useAppSelector((state) => state.auth.loggedinUser);
+
+  // State to manage reviews and user input
+  const [book, setBookDetails] = useState<any>({});
+  const [reviews, setReviews] = useState<
+    {
+      [x: string]: any; id: number; username: string | null; rating: number; reviewText: string 
+}[]
+  >([]);
+  const [newReview, setNewReview] = useState("");
+  const [newRating, setNewRating] = useState<number | null>(0);
+  const authToken = localStorage.getItem("token");
+  const userId = localStorage.getItem("userId");
+
+  // Fetch reviews when the component loads
+  useEffect(() => {
+    console.log("bookId", bookId);
+    if (bookId) {
+      const getBookReviews = apiRequest(
+        "post",
+        "/api/reviews/getBooksReviews",
+        { bookId },
+        authToken
+      );
+      getBookReviews.then((data) => setReviews(data));
+
+      const getBookDetails = apiRequest(
+        "post",
+        "/api/books/getBookDetails",
+        { bookId },
+        authToken
+      );
+      getBookDetails.then((data) => setBookDetails(data));
+    }
+  }, [bookId]);
+
+  // Handle submitting a new review
+  const handleSubmitReview = async () => {
+    console.log(
+      "newRating, newReview, id",
+      newRating,
+      newReview,
+      userId,
+      reviewDate
+    );
+    if (newRating && newReview && userId) {
+      const response = await apiRequest(
+        "post",
+        "/api/reviews/createReview",
+        {
+          bookId,
+          userId,
+          rating: newRating,
+          reviewText: newReview,
+          reviewDate,
+        },
+        authToken
+      );
+      console.log("response::", response);
+      if (response.suceess) {
+        console.log("response2::", response);
+        setReviews((prev) => [
+          ...prev,
+          {
+            id: prev.length + 1,
+            username,
+            rating: newRating,
+            reviewText: newReview,
+          },
+        ]);
+        setNewReview("");
+        setNewRating(0);
+      }
+    }
   };
 
-// REMEMBER: save image in db itself with specific width and height.
+  console.log("reviews::::::", reviews);
+  console.log("book:::::", book);
 
-  const [searchParams] = useSearchParams();
-  const bookId = searchParams.get("id");
+  // TODO: seperate out the components.
+  // 1. Book details like image, desc & rating
+  // 2. Rating and leave a review
+  // 3. User reviews
 
-  console.log("bookId", bookId);
+
   return (
-        <Paper
+    <Paper
+      sx={{
+        margin: "auto",
+        marginTop: "20%",
+        alignItems: "center",
+        name: "book-details",
+        justifyContent: "center",
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+      }}
+    >
+      <Box
         sx={{
-            margin: "auto",
-            alignItems: "center",
-            name: "book-details",
-            justifyContent: 'center',
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              padding: "1rem",
-              justifyContent: 'center',
-            }}
+          display: "flex",
+          padding: "1rem",
+          justifyContent: "center",
+        }}
+      >
+        <CardMedia
+          component="img"
+          image={book.bookCover}
+          sx={{ width: 200, height: 300, marginRight: "1rem" }}
+        />
+        <Box>
+          <Typography variant="h3" sx={{ padding: "5px" }}>
+            {book.title}
+          </Typography>
+          <Typography variant="h6" gutterBottom>
+            {book.author}
+          </Typography>
+          <Rating name="read-only" value={book.overallRating} readOnly />
+          <Typography variant="body2" sx={{ textTransform: "lowercase" }}>
+            {book.description}
+          </Typography>
+        </Box>
+      </Box>
+
+      {/* User review input */}
+      <Box sx={{ padding: "1rem" }}>
+        <Typography variant="h6">Leave a Review:</Typography>
+        <TextField
+          label="Review"
+          fullWidth
+          multiline
+          margin="normal"
+          value={newReview}
+          onChange={(e) => setNewReview(e.target.value)}
+        />
+        <Box>
+          <Rating
+            name="new-rating"
+            value={newRating}
+            onChange={(event, newValue) => setNewRating(newValue)}
+          />
+          <Button
+            variant="contained"
+            sx={{ mt: 2 }}
+            onClick={handleSubmitReview}
           >
-            <CardMedia
-              component="img"
-              image={book.thumbnail}
-              sx={{ width: 400, height: 400, marginRight: "1rem" }}
-            />
-            <Box>
-            <Typography variant="h3" sx={{ padding: "5px" }}>
-              {book.title}
-            </Typography>
-            <Typography variant="h6" gutterBottom>
-              {book.author}
-            </Typography>
-            <Rating name="read-only" value={book.rating} readOnly />
-            <Typography variant="body2" sx={{textTransform: "lowercase"}}>
-              {book.description}
-            </Typography>
-            </Box>
-          </Box>
-        </Paper>
-  )
-}
+            Submit Review
+          </Button>
+        </Box>
+      </Box>
+
+      {/* Display existing reviews */}
+      <Box sx={{ padding: "1rem" }}>
+        <Typography variant="h6">Reviews:</Typography>
+        {reviews.length > 0 ? (
+          reviews.map((review) => (
+            <Paper key={review.id} sx={{ padding: "1rem", margin: "1rem 0" }}>
+              <Typography variant="subtitle1">
+                <strong>{review?.User?.username || review.username}</strong> rated:{" "}
+                <Rating name="read-only" value={review.rating} readOnly />
+              </Typography>
+              <Typography variant="body1">{review.reviewText}</Typography>
+            </Paper>
+          ))
+        ) : (
+          <Typography>No reviews yet.</Typography>
+        )}
+      </Box>
+    </Paper>
+  );
+};
 
 export default BookDetails;

@@ -2,9 +2,9 @@
 import axios from "axios";
 import CryptoJS from "crypto-js";
 
-const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
-const ENCRYPTION_KEY = import.meta.env.VITE_REACT_APP_ENCRYPTION_KEY || "";
-const API_KEY = import.meta.env.VITE_BOOK_APP_BE_MS_API_KEY || "";
+const API_URL =  import.meta.env.VITE_REACT_APP_API_URL;
+const ENCRYPTION_KEY =  import.meta.env.VITE_REACT_APP_ENCRYPTION_KEY || "";
+const API_KEY =  import.meta.env.VITE_BOOK_APP_BE_MS_API_KEY || "";
 
 const api = axios.create({
   baseURL: API_URL,
@@ -26,9 +26,10 @@ api.interceptors.response.use(
 );
 
 export const apiRequest = async (
-  method: string,
-  endpoint: string,
-  data: object = {}
+    method: string,
+    endpoint: string,
+    data?: object,
+    token?: string | null
 ) => {
   console.log("apiRequest::::", method, endpoint, data);
   try {
@@ -37,7 +38,7 @@ export const apiRequest = async (
       url: `${API_URL}${endpoint}`,
       data,
       headers: {
-        Authorization: `Bearer123`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
         Accept: "application/json",
         "x-api-key": encryptApiKey(),

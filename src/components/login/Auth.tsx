@@ -42,16 +42,13 @@ const Auth = () => {
     setAPIError("");
 
     if (responseStatusCode !== null) {
-      console.log("error:::", responseStatusCode);
-
       if (isLogin) {
-        if (responseStatusCode !== 200) {
+        if (responseStatusCode !== 200 && responseStatusCode !== 201) {
           setAPIError("Invalid credentials. Please try again.");
-        } else {
+        } else if (responseStatusCode !== 201) {
           navigate("/books");
         }
       } else if (!isLogin) {
-        console.log("error:::::::", responseStatusCode);
         if (responseStatusCode !== 201) {
           setAPIError("Registration failed. Please try again.");
         } else {

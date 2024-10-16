@@ -11,6 +11,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { apiRequest } from "../../apis/api";
 import AuthContext from "../../context/AuthContext";
+import { useAppSelector } from "../../hooks/useAppSelector";
 
 interface Book {
   id: number;
@@ -30,17 +31,15 @@ const truncateText = (text: string, maxLength: number) => {
 
 const BookList = () => {
   const navigate = useNavigate();
-  const handleClick = (param: number) => {
-    navigate(`/book-details?id=${param}`);
-  };
-
+  const authToken =  localStorage.getItem('token')
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
   const fetchBooks = async () => {
     try {
       setLoading(true);
-      const fetchedBooks = await apiRequest('get', '/api/books/getBooks');
+      const fetchedBooks = await apiRequest('get', '/api/books/getBooks', {}, authToken);
       setBooks(fetchedBooks);
       setError(null);
     } catch (err) {
@@ -62,6 +61,10 @@ const BookList = () => {
   if (error) {
     return <div>Error: {error}</div>;
   }
+
+  const handleClick = (param: number) => {
+    navigate(`/book-details?id=${param}`);
+  };
 
   return (
     <Grid sx={{display: "flex", justifyContent: "center", marginTop: 15 }} container spacing={2}>

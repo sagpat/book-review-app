@@ -7,6 +7,7 @@ interface AuthState {
   loggedinUser: string | null;
   responseStatusCode: number | null;
   id: number | null;
+  role: string | null;
 }
 
 const initialState: AuthState = {
@@ -23,13 +24,15 @@ const authSlice = createSlice({
   reducers: {
     loginSuccess(
       state,
-      action: PayloadAction<{ token: string; username: string; status: number }>
+      action: PayloadAction<{ token: string; username: string; status: number, id: number, role: string }>
     ) {
       console.log("action.payload loginSuccess", action.payload);
       state.isAuthenticated = true;
       state.token = action.payload.token;
       state.loggedinUser = action.payload.username;
+      state.id = action.payload.id,
       state.responseStatusCode = action.payload.status;
+      state.role = action.payload.role;
     },
     authSuccess(
       state,
@@ -61,7 +64,9 @@ const authSlice = createSlice({
       console.log("to utilize message later:", status);
       // state.error = action.payload;
     },
+    // Todo: current store state is not persist, hence relying on localstorage
     logout(state) {
+      console.log("action.payload logout", state);
       state.isAuthenticated = false;
       state.token = null;
       state.loggedinUser = null;

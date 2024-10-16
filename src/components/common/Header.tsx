@@ -8,6 +8,8 @@ import {
   styled,
 } from "@mui/material";
 import { useAppSelector } from "../../hooks/useAppSelector";
+import { useNavigate } from "react-router-dom";
+import UserReviews from "../user/UserReviews";
 
 const StickyAppBar = styled(AppBar)(() => ({
   top: 0,
@@ -18,12 +20,23 @@ const StickyAppBar = styled(AppBar)(() => ({
 }));
 
 function Header() {
-  const loggedinUser = useAppSelector((state) => state.auth.loggedinUser);
-  console.log("loggedinUser", loggedinUser);
+  const userId = localStorage.getItem("userId");
+  const role = useAppSelector((state) => state.auth.role);
+  const navigate = useNavigate();
 
   const handleLogin = () => {
-    // Add your login logic here
-    console.log("Login button clicked");
+    // bug to fix: not navigating to main page from inner pages.
+    navigate("/", { replace: true });
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+  };
+
+  const handleUserReviews = () => {
+    navigate("/users-reviews", { replace: true });
+  };
+
+  const handleBookCreation = () => {
+    navigate("/create-book", { replace: true });
   };
 
   return (
@@ -39,13 +52,16 @@ function Header() {
         <Box sx={{ flexGrow: 1, display: "flex", justifyContent: "center" }}>
           <Typography variant="h5">Welcome to Books' Library</Typography>
         </Box>
-        <Button color="inherit" onClick={handleLogin}>
+        {role === 'admin' && <Button color="inherit" onClick={handleBookCreation}>
+          Book Management
+        </Button>}
+       {userId && <Button color="inherit" onClick={handleUserReviews}>
+          My Reviews
+        </Button>}
+
+        {userId && <Button color="inherit" onClick={handleLogin}>
           Logout
-        </Button>
-        {/* TODO:
-            To add -
-          1. User profile
-        */}
+        </Button>}
       </Toolbar>
     </StickyAppBar>
   );

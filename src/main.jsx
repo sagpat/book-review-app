@@ -12,7 +12,9 @@ import AuthPage from './pages/Auth'
 import Layout from './pages/Layout'
 import BooksPage from './pages/Books'
 import BookDetails from "./components/books/BookDetails";
-import store from "./store/store";
+import store  from "./store/store";
+import UserReviews from "./components/user/UserReviews";
+import CreateBook from "./components/books/CreateBook";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -20,6 +22,8 @@ const router = createBrowserRouter(
       <Route path="/" element={<AuthPage />} />
       <Route path="books" element={<BooksPage />} />
       <Route path="book-details" element={<BookDetails />} />
+      <Route path="users-reviews" element={<UserReviews />} />
+      <Route path="/create-book" element={<CreateBook />} />
     </Route>
   ));
 
